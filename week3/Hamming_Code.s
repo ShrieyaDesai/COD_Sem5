@@ -5,12 +5,10 @@ input: .word 0b1101       # Input 4-bit number (e.g., 0b1101 = 13)
 output: .word 0           # Output encoded 7-bit Hamming code
 
 .text
-.globl main
 
-main:
     # Load the input number
     lw x5, input          # Load the 4-bit input into x5
-                          # Bits in x5: b3 b2 b1 b0 (stored in lower 4 bits)
+    lw x31, output                      # Bits in x5: b3 b2 b1 b0 (stored in lower 4 bits)
 
     # Extract individual bits (b3, b2, b1, b0)
     andi x6, x5, 0x1      # x6 = b0 (extract the least significant bit)
@@ -44,7 +42,6 @@ main:
     or x19, x19, x6       # Add b0
 
     # Store the result in memory
-    sw x19, output        # Store the encoded word in memory
-
+    sw x19, 0(x31)
     # End of program
     nop                   # No operation (placeholder for termination)
