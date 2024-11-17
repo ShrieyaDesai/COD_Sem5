@@ -3,13 +3,12 @@ number:  .word 5           # Number to calculate the factorial for (e.g., 5)
 result:  .word 1           # Store the result here
 
     .text
-    .globl main
-main:
+
     # Load the number from memory
     la x5, number          # Load address of 'number' into x5
     lw x6, 0(x5)           # Load the number into x6 (x6 = number)
     
-    # Initialize the result to 1
+    
     li x7, 1               # Set result = 1
     
     # Loop to calculate factorial
