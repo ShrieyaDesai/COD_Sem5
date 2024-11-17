@@ -27,8 +27,7 @@ check_loop:
 
 not_divisible_by_9:
     # Set result to 0 (not divisible by 9)
-    li x13, 0
-    sw x13, 0(x30)        # Store 0 in the result array at the current index
+    addi x13,x0,0
     
     # Move to the next element (i++)
     addi x7, x7, 1        # Increment index
@@ -38,8 +37,7 @@ not_divisible_by_9:
 
 divisible_by_9:
     # Set result to 1 (divisible by 9)
-    li x13, 1
-    sw x13, 0(x30)        # Store 1 in the result array at the current index
+    addi x13,x0,1
 
     # Move to the next element (i++)
     addi x7, x7, 1        # Increment index
