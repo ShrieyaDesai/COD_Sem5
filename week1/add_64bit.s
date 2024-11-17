@@ -1,6 +1,6 @@
 #2 write a pgm to add 64 bit numbers using RV32I and store the result in memory along with carry status
 .data 
-b: .dword 0x8234123482341234, 0x9234123492341234
+b: .dword 0x8111123482341234, 0x9111123492341234
 .text
 la x15,b
 lw x16,0(x15)
@@ -9,16 +9,15 @@ lw x18,8(x15)
 lw x19,12(x15)
 
 
-add x15,x17,x19
-sltu x20,x15,x17
-sw x15,16(x15)
-#added msb numbers and stored it , got a carry that got stored in x21
-
-add x21,x16,x18
-#added lsb numbers and stored it in x21
-
-add x22,x21,x20
-#added lsb numbers and stored it in x21
+#add lsb's 
+add x20,x16,x18 #x20=addition of LSB
+sltu x21,x20,x16 #if res(x20)<x16 set carry bit as 1 
 
 
-sw x15,20(x15)
+add x22,x17,x19 #x22=addition of MSB
+add x22,x21,x22 #x22= msb res + carry value
+
+sw x20,16(x15)
+sw x22,20(x15)
+
+sw x21,24(x15)
