@@ -1,21 +1,22 @@
 # Program : Write an assembly program to find whether a given string is a palindrome or not, using stack operations
+
 .data
-a: .byte 0x11, 0x22, 0x33, 0x33, 0x22, 0x11
+palin: .word 0x12344321
 .text
-palindrome:
-    la x10, a          
-    la x15, a          
-    addi x15, x15, 5   
-    addi x11, x0, 1    
-loop1:
-    lb x20, 0(x10)     
-    lb x21, 0(x15)     
-    bne x20, x21, nopl 
-    addi x10, x10, 1   
-    addi x15, x15, -1  
-    blt x10, x15, loop1 
-    j exit         
-nopl:
-    addi x11, x0, 0
-exit:
-    addi x0, x0, 0     
+la x10,palin
+lw x11,0(x10)
+addi x12,x0,7
+back:
+    andi x13,x11,0xF
+    add x14,x14,x13
+    slli x14,x14,4
+    srli x11,x11,4
+    addi x12,x12,-1
+bnez x12,back
+andi x15,x11,0xFF
+add x15,x14,x15
+lw x16,palin
+beq x16,x15,itisapalindrome
+addi x20,x0,0x00         #not a palindrome
+itisapalindrome:
+    addi x20,x0,0xff     #palindrome
