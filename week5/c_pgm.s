@@ -1,34 +1,31 @@
-# Convert the following C code to assembly code
 
-# int main() {
-#	unsigned short int a[11] = {0x1234, 0x5678, ...}, h;
-#	h = 0;
-#	for(i = 0; i < 10; i++)
-#	{
-#		h = h + a[i];
-#	}
-#	a[10] = h;
-# }
-.data 
-a: .half 0x1234, 0x5678, 0x9ABC, 0xDEF0, 0x1357, 0x2468, 0x369B, 0x48AC, 0x57AD, 0x68BE
-   .half 0x0000               # Placeholder for the sum (a[10])
-
-.text
-    la x10, a                 # Load base address of array 'a' into x10
-    li x13, 0                 # i = 0
-    li x12, 0                 # h = 0
-    li x11, 10                # Loop limit (10 elements)
-
-loop:
-    slli x14, x13, 1          # Calculate offset for a[i], multiply i by 2 (size of half-word)
-    add x15, x10, x14         # x15 = base address + offset (address of a[i])
-    lh x16, 0(x15)            # Load half-word a[i] into x16
     
-    add x12, x12, x16         # h = h + a[i]
+    .data
+a:.half 0x1234, 0x5678, 0x0012, 0x0123, 0x0020, 0x0086, 0x4007, 0x0430, 0x0011, 0x0120, 0x0032
+b:.half 0x1234, 0x5678, 0x0014, 0x0121, 0x0120, 0x0210, 0x0006, 0x0120, 0x0011, 0x0020, 0x0123
+c:.half 0x1234, 0x5678, 0x0255, 0x0024, 0x0050, 0x1220, 0x0440, 0x0060, 0x0002, 0x0000, 0x0002
+.text
+addi x10,x0,0
+la x11,a
+la x12,b
+la x13,c
+addi x14,x0,10
 
-    addi x13, x13, 1          # i = i + 1
-    blt x13, x11, loop        # If i < 10, continue the loop
+func:
+    bge x10,x14,end #condition to end the looping
+    lh x15,0(x11)
+    lh x16,0(x12)
+    mul x17,x15,x16 #a*b
+    beqz x10,firstc # loop bcz it needs to compute c[0]
+    lh x18,-2(x13)   
+    add x17,x17,x18 #a*b+c[i-1]
 
-    # Store the sum in a[10]
-    addi x15, x10, 20         # Calculate address for a[10] (10th index = 20 bytes offset)
-    sh x12, 0(x15)            # Store the sum h in a[10]
+firstc:
+    sh x17,0(x13)
+    addi x11,x11,1
+    addi x12,x12,1
+    addi x13,x13,1
+    addi x10,x10,1
+    j func
+end:
+    addi x20,x0,0xff #code complete
