@@ -1,47 +1,35 @@
-    .data
-number:  .word 5           # Number to calculate the factorial for (e.g., 5)
-result:  .word 0           # Store the result here
+.text
+addi x10,x0,5 #n=5
+jal x1,fact
+addi x21,x10,0
+same: j same
 
-    .text
-
-    la x5, number          # Load address of 'number' into x5
-    lw x6, 0(x5)           # Load the number into x6 (x6 = number)
+fact:
+    addi sp,sp,-8
+    sw x1,4(sp)
+    sw x10,0(sp)
     
-    # Call the factorial function
-    jal factorial          # Jump and link to factorial function
+    #n=n-1
+    addi x5,x10,-1
+    bge x5,x0,else
     
-    # Store the result in memory
-    la x7, result          # Load address of result into x7
-    sw x6, 0(x7)           # Store the result in memory
-
-    # End of program
-    nop
-
-factorial:
-    # Base case: if n == 0, return 1
-    li x7, 0               # Load 0 into x7
-    beq x6, x7, base_case  # If x6 == 0, jump to base_case
+    addi x10,x0,1
     
-    # Recursive case: factorial(n) = n * factorial(n-1)
-    addi x6, x6, -1        # Decrement n by 1 (x6 = x6 - 1)
+    addi sp,sp,8
+    jalr x0,x1,0
     
-    # Save return address and argument
-    addi sp, sp, -8         # Make space on stack for return address and argument
-    sw ra, 0(sp)            # Store return address at sp
-    sw x6, 4(sp)            # Store n-1 at sp
+    else:
+        
+        addi x10,x10,-1
+        jal x1,fact
+        
+    addi x6,x10,0
     
-    # Call factorial(n-1)
-    jal factorial           # Recursive call to factorial
+    lw x10,0(sp)
+    lw x1,4(sp)
     
-    # Load return address and argument from stack
-    lw ra, 0(sp)            # Load return address from stack
-    lw x6, 4(sp)            # Load argument n-1 from stack
-    addi sp, sp, 8          # Free space on stack
+    addi sp,sp,-8
     
-    # Multiply result of factorial(n-1) by n
-    mul x6, x6, x7          # x6 = n * factorial(n-1)
-    jr ra                   # Return to the caller
+    mul x10,x10,x6
+    jalr x31,x1,0
     
-base_case:
-    li x6, 1                # Set result to 1 (factorial(0) = 1)
-    jr ra                   # Return to the caller
